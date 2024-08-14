@@ -13,26 +13,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 
+//BoardingPass class extends JFrame and implements ActionListener for handling GUI and user actions
 public class BoardingPass extends JFrame implements ActionListener{
     
+    //declaring UI components
     JTextField tfpnr;
     JLabel tfname, tfnationality, lblsrc, lbldest, labelfname, labelfcode, labeldate;
     JButton fetchButton;
     
+    //constructor to initialize the BoardingPass window and its components
     public BoardingPass() {
+        //setting background color and layout of the window
         getContentPane().setBackground(Color.WHITE);
         setLayout(null);
         
+        //setting title of the window
         setTitle("SUNRISE AIRLINES BOARDING PASS");
         getContentPane().setBackground(Color.WHITE);
         setLayout(null);
         
+        //subheading label for boarding pass title
         JLabel subheading = new JLabel("BOARDING PASS");
         subheading.setBounds(360, 50, 300, 30);
         subheading.setFont(new Font("Tahoma", Font.PLAIN, 24));
         subheading.setForeground(Color.RED);
         add(subheading);
         
+        //Label and text field for PNR input
         JLabel lblaadhar = new JLabel("PNR DETAILS");
         lblaadhar.setBounds(60, 100, 150, 25);
         lblaadhar.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -42,6 +49,7 @@ public class BoardingPass extends JFrame implements ActionListener{
         tfpnr.setBounds(220, 100, 150, 25);
         add(tfpnr);
         
+        //Button to fetch and display boarding pass details
         fetchButton = new JButton("Enter");
         fetchButton.setBackground(Color.BLACK);
         fetchButton.setForeground(Color.WHITE);
@@ -49,6 +57,7 @@ public class BoardingPass extends JFrame implements ActionListener{
         fetchButton.addActionListener(this);
         add(fetchButton);
         
+        //Labels to display the passenger's name, nationality, source, destination, flight name, flight code, and date
         JLabel lblname = new JLabel("NAME");
         lblname.setBounds(60, 140, 150, 25);
         lblname.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -112,37 +121,45 @@ public class BoardingPass extends JFrame implements ActionListener{
         labeldate.setBounds(220, 300, 150, 25);
         add(labeldate);
         
+        //adding an image to the window (e.g., airline logo)
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("airlinemanagementsystem/icons/icon.png"));
         Image i2 = i1.getImage().getScaledInstance(300, 230, Image.SCALE_DEFAULT);
         ImageIcon image = new ImageIcon(i2);
         JLabel lblimage = new JLabel(image);
-        lblimage.setBounds(550,0, 270, 370);
+        lblimage.setBounds(550,0, 490, 370);
         add(lblimage);
         
-        setSize(870, 420);
+        //eting size and location of the window, and make it visible
+        setSize(970, 420);
         setLocation(300, 150);
         setVisible(true);
     }
     
+    //Action listener method to handle button click events
     public void actionPerformed(ActionEvent ae) {
         String pnr = tfpnr.getText();
 
         try {
+            //establishing a connection to the database
             MyConnection conn = new MyConnection();
 
+            // query to retrieve reservation details based on the PNR number
             String query = "select * from reservation where PNR = '"+pnr+"'";
 
+            //executing the query and process the result
             ResultSet rs = conn.stm.executeQuery(query);
 
+            // If a matching record is found, populating the labels with the passenger's details
             if (rs.next()) {
                 tfname.setText(rs.getString("name")); 
                 tfnationality.setText(rs.getString("nationality")); 
-                lblsrc.setText(rs.getString("src")); 
-                lbldest.setText(rs.getString("des"));  
+                lblsrc.setText(rs.getString("departure")); 
+                lbldest.setText(rs.getString("destination1"));  
                 labelfname.setText(rs.getString("flightname"));  
                 labelfcode.setText(rs.getString("flightcode"));  
-                labeldate.setText(rs.getString("ddate")); 
+                labeldate.setText(rs.getString("book_date")); 
             } else {
+                //showing a message if the PNR is not found
                 JOptionPane.showMessageDialog(null, "Please enter correct PNR");                
             }
         } catch (Exception e) {
@@ -150,6 +167,7 @@ public class BoardingPass extends JFrame implements ActionListener{
         }
     }
 
+    //main method to create an instance of the BoardingPass class and display the window
     public static void main(String[] args) {
         new BoardingPass();
     }
